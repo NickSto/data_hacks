@@ -28,6 +28,9 @@ from decimal import Decimal
 import math
 from optparse import OptionParser
 
+TERM_WIDTH = 80
+OUTPUT_FORMAT = '%10.4f - %10.4f [%6d]: %s'
+
 class MVSD(object):
     """ A class that calculates a running Mean / Variance / Standard Deviation"""
     def __init__(self):
@@ -177,8 +180,9 @@ def histogram(stream, options):
                 break
     
     # auto-pick the hash scale
-    if max(bucket_counts) > 75:
-        bucket_scale = int(max(bucket_counts) / 75)
+    bar_width_max = TERM_WIDTH - len(OUTPUT_FORMAT % (0,0,0,0))
+    if max(bucket_counts) > bar_width_max:
+        bucket_scale = int(max(bucket_counts) / bar_width_max)
     
     print "# NumSamples = %d; Min = %0.2f; Max = %0.2f" % (samples, min_v, max_v)
     if skipped:
@@ -195,7 +199,7 @@ def histogram(stream, options):
         star_count = 0
         if bucket_count:
             star_count = bucket_count / bucket_scale
-        print '%10.4f - %10.4f [%6d]: %s' % (bucket_min, bucket_max, bucket_count, '*' * star_count)
+        print OUTPUT_FORMAT % (bucket_min, bucket_max, bucket_count, '*' * star_count)
         
 
 if __name__ == "__main__":
